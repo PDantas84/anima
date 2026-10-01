@@ -2,7 +2,10 @@ name: Mobile checks
 on:
   pull_request:
   push:
-    branches: [main, codex/anima-mvp]
+    branches: [main]
+concurrency:
+  group: mobile-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:

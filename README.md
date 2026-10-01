@@ -14,7 +14,19 @@ MVP nativo de autocuidado para **Android e iOS**, baseado em [PDantas84/anima](h
 - Backup JSON pelo compartilhamento nativo, importação pelo seletor de arquivos e exclusão dos dados mediante confirmação.
 - Fontes embarcadas, ilustrações vetoriais, áreas seguras, navegação inferior, teclado e feedback tátil. A animação de respiração respeita a opção de reduzir movimentos do aparelho.
 
+## Capturas do aplicativo instalado
+
+Capturas reais do APK no emulador Android, com dados de exemplo e conexão desligada.
+
+<img src="docs/android-home.png" width="250" alt="Tela inicial do Anima no Android" /> <img src="docs/android-conversation.png" width="250" alt="Conversa guiada nativa no Android" />
+
 ## Executar
+
+### Instalar o APK entregue no Android
+
+Transfira `anima-android.apk` para um celular com Android 7 ou posterior e abra o arquivo para instalar. Se o Android solicitar, permita a instalação pelo aplicativo usado para abrir esse arquivo. Depois, abra **Anima** pela tela de aplicativos. O APK inclui o código e as fontes; não precisa de Expo Go, computador ou conexão para os fluxos de autocuidado.
+
+### Rodar o código-fonte
 
 Requer Node.js 22.13 ou mais recente; a validação deste projeto usa Node 24.
 
