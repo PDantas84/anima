@@ -1,22 +1,58 @@
 {
   "expo": {
-    "name": "ANIMA",
+    "name": "Anima",
     "slug": "anima",
-    "version": "1.0.0",
+    "version": "0.2.0",
     "orientation": "portrait",
+    "icon": "./assets/icon.png",
     "scheme": "anima",
-    "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "userInterfaceStyle": "dark",
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "com.pdantas84.anima",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
-    "web": {
-      "bundler": "metro",
-      "output": "single"
+    "android": {
+      "package": "com.pdantas84.anima",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#241C2A"
+      },
+      "allowBackup": false,
+      "softwareKeyboardLayoutMode": "resize",
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+      ]
     },
-    "plugins": ["expo-router", "expo-font", "expo-web-browser"],
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-mark.png",
+          "imageWidth": 150,
+          "backgroundColor": "#1C191F"
+        }
+      ]
+    ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "8d61ea88-4b31-4d24-87d5-286811a6c48b"
+      }
+    },
+    "owner": "pabloads"
   }
 }

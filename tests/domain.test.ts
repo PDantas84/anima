@@ -7,9 +7,9 @@ import {
   parseState,
   saveCheckIn,
   weekDays,
-} from '../web/domain/model';
-import { guidedReply, needsImmediateSupport } from '../web/domain/conversation';
-import { cycles } from '../web/domain/content';
+} from '../domain/model';
+import { guidedReply, needsImmediateSupport } from '../domain/conversation';
+import { cycles } from '../domain/content';
 
 test('a check-in replaces the local calendar day without erasing other days', () => {
   const yesterday = new Date(2026, 9, 1, 23, 59);

@@ -1,25 +1,29 @@
-# Validação do MVP web
+# Validação do MVP mobile
 
-Validação local em 1 de outubro de 2026, usando Node.js 24.17, Expo SDK 54 e Google Chrome com Playwright.
+Esta validação se refere ao aplicativo React Native/Expo, não à antiga implementação web.
 
-| Verificação                                  | Resultado                                                                                                 |
-| -------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| TypeScript (`npm run typecheck`)             | Sem erros                                                                                                 |
-| Regras de domínio (`npm test`)               | 7 testes passaram                                                                                         |
-| Exportação de produção (`npm run build:web`) | Concluída                                                                                                 |
-| Fluxos de uso (`npm run test:e2e`)           | 22 testes: 11 cenários em desktop e celular                                                               |
-| Layout                                       | 9 telas em 1440, 820 e 390 px; sem overflow horizontal                                                    |
-| Acessibilidade automática                    | Nenhuma violação detectada pelo axe-core, regras WCAG 2 A/AA e 2.1 AA, nas 27 combinações de tela/largura |
-| Rede no primeiro acesso                      | Nenhuma requisição externa à origem da aplicação                                                          |
+## Verificações automatizadas
 
-Os cenários incluem persistência após recarga, atualização do check-in, criação/edição/busca/exclusão no diário, proteção de rascunhos, progresso e bloqueio de avanço indevido nos ciclos, cronômetro, favoritos, encaminhamento para apoio, exportação/restauração, armazenamento corrompido, falha de gravação e navegação por teclado.
+- TypeScript: aprovado.
+- 15 testes de domínio, links e persistência: aprovados.
+- 20 testes de componentes e interações React Native: aprovados.
+- Expo Doctor: 21/21 verificações aprovadas.
+- Auditoria npm: zero vulnerabilidades após atualização das dependências transitivas e aplicação do patch de compatibilidade.
+- Exportação de bundles Hermes para Android e iOS: aprovada.
+- Geração dos projetos nativos Android e iOS com `expo prebuild --no-install`: aprovada. Essa etapa não compila os binários nativos.
 
-A revisão visual verificou os layouts de desktop e celular, além de capturas do aplicativo em uso. Emulação móvel no Chrome não equivale à validação em Safari/iPhone físico. iOS e Android nativos não foram testados. A análise automática de acessibilidade não substitui testes com tecnologias assistivas.
+Os testes cobrem gravações concorrentes, falha de armazenamento sem perda de rascunho, dados corrompidos, restauração validada, hidratação antes de abrir editores, check-in por dia, sequência de jornadas, palavras de risco, backups pelo compartilhamento nativo e exclusão confirmada.
 
-## Limitações conhecidas
+## Execução nativa
 
-- Persistência local, sem autenticação, criptografia ou sincronização entre dispositivos.
-- A conversa usa roteiros explícitos; não há provedor de IA generativa conectado.
-- Regras de segurança por palavras-chave são limitadas e não avaliam risco clínico.
-- A auditoria npm conserva quatro avisos herdados da cadeia do SDK: um alto de compilação em `image-size` e três moderados em `decode-uri-component` / `query-string` / Expo Router. Contexto e próximos passos estão no README.
-- O app web foi validado no modo de produção servido em `127.0.0.1:4173`. A prévia é local; não houve publicação pública do aplicativo.
+Foi preparado um emulador Android 15/API 35, ARM64, 1080×2340, densidade 420. O app foi executado com Expo Go SDK 57 e Metro restrito a localhost/ADB.
+
+Verificados no emulador: onboarding com nome e intenção, navegação inferior, check-in, teclado em campos do diário, alerta de rascunho não salvo, gravação e leitura de uma página, início e conclusão de encontro de jornada, temporizador de um minuto até zero e registro do ritual.
+
+Os registros usados na verificação são exemplos criados no emulador. O aplicativo distribuído inicia vazio.
+
+## Limites da validação
+
+Não foi executado em iPhone ou aparelho Android físico. Não há teste de sensação tátil real, VoiceOver/TalkBack completo ou publicação em lojas. A exportação de JavaScript para iOS e a geração do projeto Xcode não equivalem a compilar ou testar um IPA.
+
+A fila remota de Android no Expo atrasou a geração do APK. A compilação local pelo EAS, com as credenciais de assinatura do mesmo projeto, está sendo preparada; o resultado final do binário será registrado aqui depois da compilação e da instalação no emulador.
