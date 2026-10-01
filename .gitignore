@@ -33,3 +33,8 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# local browser QA
+playwright-report/
+test-results/
+work/

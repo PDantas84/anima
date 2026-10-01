@@ -1,12 +1,25 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from 'react';
 import { Session } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase';
+import { supabase, supabaseConfigured } from '@/lib/supabase';
 
 type AuthContextValue = {
   session: Session | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: string | null }>;
-  signUp: (email: string, password: string, name: string) => Promise<{ error: string | null }>;
+  signIn: (
+    email: string,
+    password: string,
+  ) => Promise<{ error: string | null }>;
+  signUp: (
+    email: string,
+    password: string,
+    name: string,
+  ) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
 };
 
@@ -17,6 +30,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!supabaseConfigured) {
+      setLoading(false);
+      return;
+    }
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       setLoading(false);
@@ -30,26 +47,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (!supabaseConfigured)
+      return {
+        error:
+          'Configure o Supabase para usar o app nativo. O MVP web funciona sem conta.',
+      };
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
     return { error: error?.message ?? null };
   };
 
   const signUp = async (email: string, password: string, name: string) => {
+    if (!supabaseConfigured)
+      return {
+        error:
+          'Configure o Supabase para usar o app nativo. O MVP web funciona sem conta.',
+      };
     const { error } = await supabase.auth.signUp({ email, password });
     if (error) return { error: error.message };
-    const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    const { data: signInData, error: signInError } =
+      await supabase.auth.signInWithPassword({ email, password });
     if (signInError) return { error: signInError.message };
     const uid = signInData.session?.user.id;
     if (uid) {
-      await supabase.from('users_profile').upsert(
-        { user_id: uid, name, email },
-        { onConflict: 'user_id' }
-      );
+      await supabase
+        .from('users_profile')
+        .upsert({ user_id: uid, name, email }, { onConflict: 'user_id' });
     }
     return { error: null };
   };
 
   const signOut = async () => {
+    if (!supabaseConfigured) return;
     await supabase.auth.signOut();
   };
 
