@@ -33,3 +33,17 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# local browser QA
+playwright-report/
+test-results/
+work/
+
+# native builds and signing
+dist-mobile/
+android/
+ios/
+credentials.json
+*.apk
+*.aab
+*.ipa
