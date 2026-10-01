@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Text, View } from 'react-native';
+import { Alert, Platform, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
@@ -64,7 +64,9 @@ export default function Profile() {
     try {
       const result = await DocumentPicker.getDocumentAsync({
         type: ['application/json', 'text/plain'],
-        copyToCacheDirectory: true,
+        // Android grants access to the selected content URI. Expo Go's picker
+        // cache is outside its scoped FileSystem directory in SDK 57.
+        copyToCacheDirectory: Platform.OS !== 'android',
         multiple: false,
       });
       if (result.canceled) return;
@@ -90,7 +92,8 @@ export default function Profile() {
           ],
         );
       } finally {
-        if (file.exists) file.delete();
+        // Only remove the temporary iOS copy, never the user's Android file.
+        if (Platform.OS !== 'android' && file.exists) file.delete();
       }
     } catch (e) {
       Alert.alert(

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert } from 'react-native';
+import { Alert, Platform } from 'react-native';
 import {
   act,
   fireEvent,
@@ -59,11 +59,11 @@ async function mount(
     await new Promise((resolve) => setTimeout(resolve, 10));
   });
 }
-function selectBackup(value: string) {
-  mockFiles.set('cache/import.json', value);
+function selectBackup(value: string, uri = 'cache/import.json') {
+  mockFiles.set(uri, value);
   (DocumentPicker.getDocumentAsync as jest.Mock).mockResolvedValue({
     canceled: false,
-    assets: [{ uri: 'cache/import.json', size: value.length }],
+    assets: [{ uri, size: value.length }],
   });
 }
 beforeEach(async () => {
@@ -123,6 +123,37 @@ it('restores a valid backup only after native confirmation', async () => {
   expect(JSON.parse((await AsyncStorage.getItem(STORAGE_KEY))!).onboarded).toBe(
     true,
   );
+});
+it('reads the Android-selected document without deleting the original backup', async () => {
+  const originalPlatform = Platform.OS;
+  Platform.OS = 'android';
+  try {
+    await mount();
+    const uri = 'content://documents/backup.json';
+    const content = JSON.stringify(emptyState());
+    selectBackup(content, uri);
+    fireEvent.press(screen.getByRole('button', { name: 'Importar backup' }));
+    await waitFor(() =>
+      expect(Alert.alert).toHaveBeenCalledWith(
+        'Restaurar este backup?', expect.any(String), expect.any(Array),
+      ),
+    );
+    expect(DocumentPicker.getDocumentAsync).toHaveBeenCalledWith(
+      expect.objectContaining({ copyToCacheDirectory: false }),
+    );
+    expect(mockFiles.get(uri)).toBe(content);
+  } finally {
+    Platform.OS = originalPlatform;
+  }
+});
+it('leaves saved data intact when the native file picker is canceled', async () => {
+  await mount();
+  const original = await AsyncStorage.getItem(STORAGE_KEY);
+  (DocumentPicker.getDocumentAsync as jest.Mock).mockResolvedValue({ canceled: true });
+  fireEvent.press(screen.getByRole('button', { name: 'Importar backup' }));
+  await waitFor(() => expect(DocumentPicker.getDocumentAsync).toHaveBeenCalled());
+  expect(await AsyncStorage.getItem(STORAGE_KEY)).toBe(original);
+  expect(Alert.alert).not.toHaveBeenCalled();
 });
 it('exports corrupt raw data for recovery without overwriting it', async () => {
   await mount('{damaged');
